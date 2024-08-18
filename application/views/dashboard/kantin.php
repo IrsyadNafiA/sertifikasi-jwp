@@ -2,7 +2,7 @@
     <?php if ($user['role'] == '1') : ?>
         <button class="btn btn-success w-fit text-white mb-4" onclick="tambah_kantin.showModal()">Tambah Kantin</button>
     <?php endif ?>
-    <div class="w-full grid grid-cols-4 gap-4">
+    <div class="w-full grid grid-cols-1 md:grid-cols-4 gap-4">
         <?php foreach ($kantin as $row) : ?>
             <div class="card bg-base-100 w-full shadow-md">
                 <div class="card-body">

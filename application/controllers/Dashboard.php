@@ -119,6 +119,9 @@ class Dashboard extends CI_Controller
         $data['menu'] = $this->Main_model->getMenuByKantin($pemilik);
         $data['kantin'] = $this->Main_model->getKantinByPemilik($pemilik);
 
+        // print_r($data['menu']);
+        // die;
+
         if (!isset($_POST['submit'])) {
             $this->load->view('templates/header', $data);
             $this->load->view('templates/sidebar', $data);
@@ -149,7 +152,7 @@ class Dashboard extends CI_Controller
         ];
 
         $this->db->update('menus', $data, ['id' => $id]);
-        redirect(base_url('dashboard/detailkantin/' . $data['user']['username']));
+        redirect($this->agent->referrer());
     }
 
     public function DeleteMenu($id)
@@ -158,6 +161,68 @@ class Dashboard extends CI_Controller
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
 
         $this->db->delete('menus', ['id' => $id]);
-        redirect(base_url('dashboard/detailkantin/' . $data['user']['username']));
+        redirect($this->agent->referrer());
+    }
+
+    public function PesanMenu($id)
+    {
+        $session = $this->session->userdata();
+        $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
+
+        $jumlah = $this->input->post('jumlah');
+        $harga_awal = $this->input->post('harga');
+        $harga = $harga_awal * $jumlah;
+
+        $data = [
+            'kantin_id' => $this->input->post('kantin_id'),
+            'nama_menu' => $this->input->post('nama_menu'),
+            'nama_pemesan' => $this->input->post('nama_pemesan'),
+            'username' => $this->input->post('username'),
+            'jumlah' => $this->input->post('jumlah'),
+            'tanggal_pemesanan' => date('Y-m-d H:i:s'),
+            'harga' => $harga,
+            'status' => 'waiting',
+        ];
+
+        // echo '<pre>';
+        // print_r($data);
+        // echo '</pre>';
+        // die;
+
+        $this->db->insert('pesanan', $data);
+        redirect($this->agent->referrer());
+    }
+
+    public function Pesanan()
+    {
+        // DATA WAJIB
+        $data['title'] = 'Pesanan';
+        $session = $this->session->userdata();
+        $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
+
+        // DATA TAMBAHAN
+        $data['customJs'] = ['pesananJs'];
+        $data['pesanan'] = ($data['user']['role'] == '2') ? $this->Main_model->getPesananByKantin($data['user']['username']) : $this->Main_model->getPesananByUser($data['user']['username']);
+
+        // echo '<pre>';
+        // print_r($data['pesanan']);
+        // echo '</pre>';
+        // die;
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('dashboard/pesanan', $data);
+        $this->load->view('templates/footer');
+    }
+
+    public function ApprovalPesanan($id)
+    {
+        $data = [
+            'status' => $this->input->post('status'),
+            'informasi' => $this->input->post('informasi'),
+        ];
+
+        $this->db->update('pesanan', $data, ['id' => $id]);
+        redirect($this->agent->referrer());
     }
 }

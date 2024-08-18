@@ -17,6 +17,7 @@
                     <li><a href="<?= base_url('dashboard') ?>">Dashboard</a></li>
                     <?php if ($user['role'] !== '2') : ?>
                         <li><a href="<?= base_url('dashboard/kantin') ?>">Kantin</a></li>
+                        <li><a href="<?= base_url('dashboard/pesanan') ?>">Pesanan Saya</a></li>
                     <?php endif ?>
                     <?php if ($user['role'] == '2') : ?>
                         <li><a href="<?= base_url('dashboard/detailkantin/') . $user['username'] ?>">Kantin Saya</a></li>

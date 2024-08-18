@@ -4,8 +4,16 @@
     <ul class="menu bg-base-200 min-h-full w-80 p-4">
         <!-- Sidebar content here -->
         <li><a href="<?= base_url('dashboard') ?>">Dashboard</a></li>
-        <li><a href="">Data Kantin</a></li>
-        <li><a href="">Data User</a></li>
+        <?php if ($user['role'] !== '2') : ?>
+            <li><a href="<?= base_url('dashboard/kantin') ?>">Kantin</a></li>
+            <li><a href="<?= base_url('dashboard/pesanan') ?>">Pesanan Saya</a></li>
+        <?php endif ?>
+        <?php if ($user['role'] == '2') : ?>
+            <li><a href="<?= base_url('dashboard/detailkantin/') . $user['username'] ?>">Kantin Saya</a></li>
+        <?php endif ?>
+        <?php if ($user['role'] == '1') : ?>
+            <li><a href="<?= base_url('dashboard/datauser') ?>">Data User</a></li>
+        <?php endif ?>
         <li><a href="<?= base_url('dashboard/editprofil') ?>">Edit Profil</a></li>
         <li><a href="<?= base_url('auth/logout') ?>">Logout</a></li>
     </ul>

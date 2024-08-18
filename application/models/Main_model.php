@@ -35,4 +35,29 @@ class Main_model extends CI_model
     {
         return $this->db->get_where('kantin', ['pemilik' => $pemilik])->row_array();
     }
+
+    public function getPesananByKantin($kantin)
+    {
+        $this->db->select('pesanan.*');
+        // $this->db->select('kantin.*');
+        // $this->db->from('kantin.nama as nama_kantin');
+        $this->db->from('pesanan');
+        $this->db->join('kantin', 'kantin.id = pesanan.kantin_id');
+        $this->db->where('kantin.pemilik', $kantin);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function getPesananByUser($user)
+    {
+        $this->db->select('pesanan.*');
+        // $this->db->select('kantin.*');
+        // $this->db->from('kantin.nama as nama_kantin');
+        $this->db->from('pesanan');
+        $this->db->join('kantin', 'kantin.id = pesanan.kantin_id');
+        $this->db->where('pesanan.username', $user);
+        $this->db->order_by('pesanan.id', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }

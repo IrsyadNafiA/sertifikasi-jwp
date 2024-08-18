@@ -1,10 +1,13 @@
 <div class="w-full flex flex-col p-4">
     <?php if ($user['role'] == '2') : ?>
-        <button class="btn btn-success w-fit text-white mb-4" onclick="tambah_menu.showModal()">Tambah Menu</button>
+        <div class="w-full flex justify-between md:justify-start gap-3">
+            <button class="btn btn-success w-fit text-white mb-4" onclick="tambah_menu.showModal()">Tambah Menu</button>
+            <a href="<?= base_url('dashboard/pesanan') ?>" class="btn btn-primary w-fit text-white mb-4">Pesanan</a>
+        </div>
     <?php else : ?>
         <a href="<?= base_url('dashboard/kantin') ?>" class="btn btn-success w-fit text-white mb-4">Back</a>
     <?php endif ?>
-    <div class="w-full grid grid-cols-4 gap-4">
+    <div class="w-full grid grid-cols-1 md:grid-cols-4 gap-4">
         <?php foreach ($menu as $row) : ?>
             <div class="card bg-base-100 w-full shadow-md">
                 <div class="card-body">
@@ -16,7 +19,7 @@
                             <button class="btn btn-success text-white" onclick="edit_modal_<?= $row['id'] ?>.showModal()"><i class="fa-solid fa-pen-to-square"></i></i></button>
                             <button class="btn btn-error text-white" onclick="delete_modal_<?= $row['id'] ?>.showModal()"><i class="fa-solid fa-trash"></i></button>
                         <?php else : ?>
-                            <button class="btn btn-primary">Pesan</button>
+                            <button class="btn btn-primary" onclick="pesan_modal_<?= $row['id'] ?>.showModal()">Pesan</button>
                         <?php endif ?>
                     </div>
                 </div>
@@ -98,6 +101,41 @@
             <h3 class="text-lg font-bold mb-4">Apakah yakin ingin menghapus menu <span class="text-blue-600"><?= $row['nama'] ?></span>?</h3>
             <form action="<?= base_url('dashboard/deleteMenu/' . $row['id']) ?>" method="POST">
                 <button type="submit" class="btn btn-error text-white mr-2">Iya</button>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+<?php endforeach; ?>
+
+<!-- pesan modal -->
+<?php foreach ($menu as $row) : ?>
+    <dialog id="pesan_modal_<?= $row['id'] ?>" class="modal">
+        <div class="modal-box">
+            <h3 class="text-lg font-bold mb-4">Pesan menu <span class="text-blue-600"><?= $row['nama'] ?></span>?</h3>
+            <form action="<?= base_url('dashboard/pesanMenu/' . $row['id']) ?>" method="POST">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Nama Menu</span>
+                    </label>
+                    <input type="text" name="nama_menu" placeholder="Nama Menu" value="<?= $row['nama'] ?>" class="input input-bordered" required readonly />
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Jumlah Pesanan</span>
+                    </label>
+                    <input type="number" name="jumlah" placeholder="Jumlah" class="input input-bordered" required />
+                </div>
+                <div class="hidden">
+                    <input type="text" name="kantin_id" value="<?= $row['kantin_id'] ?>">
+                    <input type="text" name="nama_pemesan" value="<?= $user['nama_lengkap'] ?>">
+                    <input type="text" name="username" value="<?= $user['username'] ?>">
+                    <input type="text" name="harga" value="<?= $row['harga'] ?>">
+                </div>
+                <div class="form-control mt-6">
+                    <button type="submit" name="submit" class="btn btn-primary w-fit">Pesan</button>
+                </div>
             </form>
         </div>
         <form method="dialog" class="modal-backdrop">
