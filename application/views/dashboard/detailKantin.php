@@ -128,7 +128,7 @@
                     <input type="number" name="jumlah" placeholder="Jumlah" class="input input-bordered" required />
                 </div>
                 <div class="hidden">
-                    <input type="text" name="kantin_id" value="<?= $row['kantin_id'] ?>">
+                    <input type="text" name="menu_id" value="<?= $row['id'] ?>">
                     <input type="text" name="nama_pemesan" value="<?= $user['nama_lengkap'] ?>">
                     <input type="text" name="username" value="<?= $user['username'] ?>">
                     <input type="text" name="harga" value="<?= $row['harga'] ?>">

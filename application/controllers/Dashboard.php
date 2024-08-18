@@ -97,6 +97,19 @@ class Dashboard extends CI_Controller
         redirect(base_url('dashboard/editprofil'));
     }
 
+    public function ChangePassword()
+    {
+        // DATA WAJIB
+        $data['title'] = 'Dashboard';
+        $session = $this->session->userdata();
+        $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('dashboard/changePassword', $data);
+        $this->load->view('templates/footer');
+    }
+
     public function DataUser()
     {
         $data['title'] = 'Data User';
@@ -125,6 +138,26 @@ class Dashboard extends CI_Controller
             $this->db->insert('users', $data);
             redirect(base_url('dashboard/datauser'));
         }
+    }
+
+    public function EditDataUser($id)
+    {
+        $data = [
+            'username' => $this->input->post('username'),
+            'nama_lengkap' => $this->input->post('nama_lengkap'),
+            'no_hp' => $this->input->post('no_hp'),
+            'kelas' => $this->input->post('kelas'),
+            'role' => $this->input->post('role'),
+        ];
+
+        $this->db->update('users', $data, ['id' => $id]);
+        redirect(base_url('dashboard/datauser'));
+    }
+
+    public function DeleteDataUser($id)
+    {
+        $this->db->delete('users', ['id' => $id]);
+        redirect(base_url('dashboard/datauser'));
     }
 
     public function Kantin()
@@ -162,8 +195,11 @@ class Dashboard extends CI_Controller
         $data['menu'] = $this->Main_model->getMenuByKantin($pemilik);
         $data['kantin'] = $this->Main_model->getKantinByPemilik($pemilik);
 
-        // print_r($data['menu']);
-        // die;
+        if ($data['user']['role'] == '2') {
+            if ($data['kantin'] == null) {
+                redirect(base_url('dashboard'));
+            }
+        }
 
         if (!isset($_POST['submit'])) {
             $this->load->view('templates/header', $data);
@@ -178,7 +214,7 @@ class Dashboard extends CI_Controller
                 'harga' => $this->input->post('harga'),
             ];
 
-            $this->db->insert('menus', $data);
+            $this->db->insert('menu', $data);
             redirect(base_url('dashboard/detailkantin/' . $pemilik));
         }
     }
@@ -194,7 +230,7 @@ class Dashboard extends CI_Controller
             'harga' => $this->input->post('harga'),
         ];
 
-        $this->db->update('menus', $data, ['id' => $id]);
+        $this->db->update('menu', $data, ['id' => $id]);
         redirect($this->agent->referrer());
     }
 
@@ -203,7 +239,7 @@ class Dashboard extends CI_Controller
         $session = $this->session->userdata();
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
 
-        $this->db->delete('menus', ['id' => $id]);
+        $this->db->delete('menu', ['id' => $id]);
         redirect($this->agent->referrer());
     }
 
@@ -217,7 +253,7 @@ class Dashboard extends CI_Controller
         $harga = $harga_awal * $jumlah;
 
         $data = [
-            'kantin_id' => $this->input->post('kantin_id'),
+            'menu_id' => $this->input->post('menu_id'),
             'nama_menu' => $this->input->post('nama_menu'),
             'nama_pemesan' => $this->input->post('nama_pemesan'),
             'username' => $this->input->post('username'),
@@ -233,7 +269,7 @@ class Dashboard extends CI_Controller
         // die;
 
         $this->db->insert('pesanan', $data);
-        redirect($this->agent->referrer());
+        redirect(base_url('dashboard/pesanan'));
     }
 
     public function Pesanan()

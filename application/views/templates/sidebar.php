@@ -31,6 +31,7 @@
                         </div>
                         <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                             <li><a href="<?= base_url('dashboard/editprofil') ?>">Edit Profil</a></li>
+                            <li><a href="<?= base_url('dashboard/changepassword') ?>">Ganti Password</a></li>
                             <li><a href="<?= base_url('auth/logout') ?>">Logout</a></li>
                         </ul>
                     </div>

@@ -17,7 +17,7 @@ class Auth extends CI_Controller
         $this->load->view('auth/login');
     }
 
-    public function login()
+    public function Login()
     {
         $this->form_validation->set_rules('username', 'Username', 'required|trim');
         $this->form_validation->set_rules('password', 'Password', 'required|trim');
@@ -51,7 +51,7 @@ class Auth extends CI_Controller
         }
     }
 
-    public function register()
+    public function Register()
     {
         $this->form_validation->set_rules('username', 'Username', 'required|trim');
         $this->form_validation->set_rules('password', 'Password', 'required|trim');
@@ -92,10 +92,33 @@ class Auth extends CI_Controller
         }
     }
 
-    public function logout()
+    public function Logout()
     {
         $this->session->unset_userdata(['username', 'nama_lengkap', 'no_hp', 'kelas', 'role', 'user_data']);
         $this->session->sess_destroy();
         redirect(base_url('auth/login'));
+    }
+
+    public function ChangePassword()
+    {
+        $this->form_validation->set_rules('password', 'Password', 'required|trim');
+        $this->form_validation->set_rules('confirm_password', 'Password', 'required|trim');
+
+        if ($this->form_validation->run() == true) {
+            $password = $this->input->post('password');
+            $confirm_password = $this->input->post('confirm_password');
+            $username = $this->input->post('username');
+            if ($password != $confirm_password) {
+                $this->session->set_flashdata('error', 'Password tidak cocok');
+                redirect(base_url('dashboard/changepassword'));
+            } else {
+                $data = [
+                    'password' => password_hash($password, PASSWORD_DEFAULT)
+                ];
+                $this->db->where('username', $username);
+                $this->db->update('users', $data);
+                redirect(base_url('auth/logout'));
+            }
+        }
     }
 }
