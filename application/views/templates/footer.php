@@ -1,8 +1,15 @@
 </div>
 <div class="drawer-side">
     <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
-    <ul class="menu bg-base-200 min-h-full w-80 p-4">
+    <ul class="menu bg-base-200 min-h-full w-80 p-4 font-medium">
         <!-- Sidebar content here -->
+        <li>
+            <div class="avatar">
+                <div class="ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
+                    <img src="<?= base_url('assets/img/profile_picture/') . $user['profile_picture'] ?>" />
+                </div>
+            </div>
+        </li>
         <li><a href="<?= base_url('dashboard') ?>">Dashboard</a></li>
         <?php if ($user['role'] !== '2') : ?>
             <li><a href="<?= base_url('dashboard/kantin') ?>">Kantin</a></li>

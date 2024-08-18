@@ -10,9 +10,9 @@
                     </svg>
                 </label>
             </div>
-            <div class="mx-2 flex-1 px-2 font-bold text-xl">E-Kantin</div>
+            <a href="<?= base_url('dashboard') ?>" class="mx-2 flex-1 px-2 font-bold text-2xl">E-Kantin</a>
             <div class="hidden flex-none lg:block">
-                <ul class="menu menu-horizontal">
+                <ul class="menu menu-horizontal font-medium items-center">
                     <!-- Navbar menu content here -->
                     <li><a href="<?= base_url('dashboard') ?>">Dashboard</a></li>
                     <?php if ($user['role'] !== '2') : ?>
@@ -25,8 +25,15 @@
                     <?php if ($user['role'] == '1') : ?>
                         <li><a href="<?= base_url('dashboard/datauser') ?>">Data User</a></li>
                     <?php endif ?>
-                    <li><a href="<?= base_url('dashboard/editprofil') ?>">Edit Profil</a></li>
-                    <li><a href="<?= base_url('auth/logout') ?>">Logout</a></li>
+                    <div class="dropdown dropdown-hover dropdown-end ml-4">
+                        <div tabindex="0" class="w-12 h-12 rounded-full">
+                            <img src="<?= base_url('assets/img/profile_picture/') . $user['profile_picture'] ?>" class="w-full h-full rounded-full object-cover" alt="">
+                        </div>
+                        <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                            <li><a href="<?= base_url('dashboard/editprofil') ?>">Edit Profil</a></li>
+                            <li><a href="<?= base_url('auth/logout') ?>">Logout</a></li>
+                        </ul>
+                    </div>
                 </ul>
             </div>
         </div>

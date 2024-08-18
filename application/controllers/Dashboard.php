@@ -24,6 +24,9 @@ class Dashboard extends CI_Controller
         $session = $this->session->userdata();
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
 
+        $data['pesanan'] = ($data['user']['role'] == '2') ? $this->Main_model->getPesananByKantin($data['user']['username']) : $this->Main_model->getPesananByUser($session['user_data']['username'], 3, 0);
+        $data['kantin'] = $this->Main_model->getAllKantin();
+
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('dashboard/index', $data);
@@ -36,6 +39,9 @@ class Dashboard extends CI_Controller
         $data['title'] = 'Edit Profil';
         $session = $this->session->userdata();
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
+
+        // DATA TAMBAHAN
+        $data['customJs'] = ['editProfilJs'];
 
         if (!isset($_POST['submit'])) {
             $this->load->view('templates/header', $data);
@@ -52,6 +58,43 @@ class Dashboard extends CI_Controller
             $this->db->update('users', $data, ['username' => $session['user_data']['username']]);
             redirect(base_url('dashboard/editprofil'));
         }
+    }
+
+    public function editPicture()
+    {
+        $session = $this->session->userdata();
+        $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
+        // $data['customJs'] = 'sweetAlertJs';
+
+        $username = $this->input->post('username');
+
+        $upload_image = $_FILES['profile_picture']['name'];
+
+        if ($upload_image) {
+            $config['allowed_types'] = 'gif|jpg|png|jpeg';
+            $config['max_size'] = '2048';
+            $config['upload_path'] = './assets/img/profile_picture/';
+
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('profile_picture')) {
+                $old_image = $data['user']['profile_picture'];
+
+                if ($old_image != 'default.png') {
+                    unlink(FCPATH . 'assets/img/profile/' . $old_image);
+                }
+
+                $new_image = $this->upload->data('file_name');
+                $this->db->set('profile_picture', $new_image);
+            } else {
+                $this->session->set_flashdata('message', ['icon' => 'error', 'title' => 'Failed', 'text' => 'Failed to change profile picture']);
+            }
+        }
+        $this->db->set('username', $username);
+        $this->db->where('username', $username);
+        $this->db->update('users');
+        $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Success', 'text' => 'Successfully change profile picture']);
+        redirect(base_url('dashboard/editprofil'));
     }
 
     public function DataUser()
