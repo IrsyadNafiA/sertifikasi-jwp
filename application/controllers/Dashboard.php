@@ -140,6 +140,7 @@ class Dashboard extends CI_Controller
                     'no_hp' => $this->input->post('no_hp'),
                     'kelas' => $this->input->post('kelas'),
                     'role' => $this->input->post('role'),
+                    'profile_picture' => 'default.png',
                 ];
                 $this->db->insert('users', $data);
 

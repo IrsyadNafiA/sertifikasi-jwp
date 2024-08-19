@@ -82,7 +82,8 @@ class Auth extends CI_Controller
                         'nama_lengkap' => $this->input->post('nama_lengkap'),
                         'no_hp' => $this->input->post('no_hp'),
                         'kelas' => $this->input->post('kelas'),
-                        'role' => 3
+                        'role' => 3,
+                        'profile_picture' => 'default.png',
                     ];
                     $this->db->insert('users', $data);
 
