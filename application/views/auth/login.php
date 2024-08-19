@@ -32,8 +32,11 @@
                             <span class="label-text">Password</span>
                         </label>
                         <input type="password" name="password" placeholder="password" class="input input-bordered" required />
+                    </div>
+                    <div class="form-control">
                         <label class="label">
-                            <a href="<?= base_url('auth/register') ?>" class="label-text-alt link link-hover">Register?</a>
+                            <span class="label-text">Belum memiliki akun?</span>
+                            <a href="<?= base_url('auth/register') ?>" class="label-text-alt link link-hover text-primary">Daftar akun</a>
                         </label>
                     </div>
                     <?php if ($this->session->flashdata('error')) : ?>
@@ -46,6 +49,15 @@
             </div>
         </div>
     </div>
+    <?php if (isset($customJs)) : ?>
+        <?php if (gettype($customJs) == 'array') : ?>
+            <?php foreach ($customJs as $index => $row) : ?>
+                <?php $this->load->view('templates/custom/' . $row) ?>
+            <?php endforeach ?>
+        <?php elseif (gettype($customJs) == 'string') : ?>
+            <?php $this->load->view('templates/custom/' . $customJs) ?>
+        <?php endif ?>
+    <?php endif ?>
 </body>
 
 </html>

@@ -117,7 +117,7 @@ class Dashboard extends CI_Controller
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
 
         // DATA TAMBAHAN
-        $data['customJs'] = ['dataUserJs'];
+        $data['customJs'] = ['dataUserJs', 'sweetAlertJs'];
         $data['userData'] = $this->Main_model->getAllUser();
 
         if (!isset($_POST['submit'])) {
@@ -126,37 +126,58 @@ class Dashboard extends CI_Controller
             $this->load->view('dashboard/dataUser', $data);
             $this->load->view('templates/footer');
         } else {
-            $data = [
-                'username' => $this->input->post('username'),
-                'password' => password_hash($this->input->post('username'), PASSWORD_DEFAULT),
-                'nama_lengkap' => $this->input->post('nama_lengkap'),
-                'no_hp' => $this->input->post('no_hp'),
-                'kelas' => $this->input->post('kelas'),
-                'role' => $this->input->post('role'),
-            ];
+            $username = $this->input->post('username');
+            $usernameCheck = $this->Main_model->getUserData($username);
 
-            $this->db->insert('users', $data);
-            redirect(base_url('dashboard/datauser'));
+            if ($usernameCheck) {
+                $this->session->set_flashdata('message', ['icon' => 'error', 'title' => 'Failed', 'text' => 'Username sudah terdaftar']);
+                redirect(base_url('dashboard/datauser'));
+            } else {
+                $data = [
+                    'username' => $this->input->post('username'),
+                    'password' => password_hash($this->input->post('username'), PASSWORD_DEFAULT),
+                    'nama_lengkap' => $this->input->post('nama_lengkap'),
+                    'no_hp' => $this->input->post('no_hp'),
+                    'kelas' => $this->input->post('kelas'),
+                    'role' => $this->input->post('role'),
+                ];
+                $this->db->insert('users', $data);
+
+                $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Akun berhasil dibuat!']);
+                redirect(base_url('dashboard/datauser'));
+            }
         }
     }
 
     public function EditDataUser($id)
     {
-        $data = [
-            'username' => $this->input->post('username'),
-            'nama_lengkap' => $this->input->post('nama_lengkap'),
-            'no_hp' => $this->input->post('no_hp'),
-            'kelas' => $this->input->post('kelas'),
-            'role' => $this->input->post('role'),
-        ];
+        $username = $this->input->post('username');
+        $usernameCheck = $this->Main_model->getUserData($username);
 
-        $this->db->update('users', $data, ['id' => $id]);
-        redirect(base_url('dashboard/datauser'));
+        print_r($usernameCheck);
+        die;
+
+        if ($usernameCheck) {
+            $this->session->set_flashdata('message', ['icon' => 'error', 'title' => 'Gagal', 'text' => 'Username sudah terdaftar!']);
+        } else {
+            $data = [
+                'username' => $this->input->post('username'),
+                'nama_lengkap' => $this->input->post('nama_lengkap'),
+                'no_hp' => $this->input->post('no_hp'),
+                'kelas' => $this->input->post('kelas'),
+                'role' => $this->input->post('role'),
+            ];
+            $this->db->update('users', $data, ['id' => $id]);
+
+            $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Akun berhasil diedit!']);
+            redirect(base_url('dashboard/datauser'));
+        }
     }
 
     public function DeleteDataUser($id)
     {
         $this->db->delete('users', ['id' => $id]);
+        $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Akun berhasil dihapus!']);
         redirect(base_url('dashboard/datauser'));
     }
 
@@ -166,6 +187,7 @@ class Dashboard extends CI_Controller
         $session = $this->session->userdata();
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
 
+        $data['customJs'] = ['sweetAlertJs'];
         $data['pemilik'] = $this->Main_model->getUserByRole(2);
         $data['kantin'] = $this->Main_model->getAllKantin();
 
@@ -180,8 +202,9 @@ class Dashboard extends CI_Controller
                 'deskripsi' => $this->input->post('deskripsi'),
                 'pemilik' => $this->input->post('pemilik'),
             ];
-
             $this->db->insert('kantin', $data);
+
+            $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Kantin berhasil dibuat!']);
             redirect(base_url('dashboard/kantin'));
         }
     }
@@ -192,6 +215,7 @@ class Dashboard extends CI_Controller
         $session = $this->session->userdata();
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
 
+        $data['customJs'] = ['sweetAlertJs'];
         $data['menu'] = $this->Main_model->getMenuByKantin($pemilik);
         $data['kantin'] = $this->Main_model->getKantinByPemilik($pemilik);
 
@@ -213,8 +237,9 @@ class Dashboard extends CI_Controller
                 'deskripsi' => $this->input->post('deskripsi'),
                 'harga' => $this->input->post('harga'),
             ];
-
             $this->db->insert('menu', $data);
+
+            $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Menu berhasil ditambahkan!']);
             redirect(base_url('dashboard/detailkantin/' . $pemilik));
         }
     }
@@ -229,8 +254,9 @@ class Dashboard extends CI_Controller
             'deskripsi' => $this->input->post('deskripsi'),
             'harga' => $this->input->post('harga'),
         ];
-
         $this->db->update('menu', $data, ['id' => $id]);
+
+        $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Menu berhasil diedit!']);
         redirect($this->agent->referrer());
     }
 
@@ -240,6 +266,7 @@ class Dashboard extends CI_Controller
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
 
         $this->db->delete('menu', ['id' => $id]);
+        $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Menu berhasil dihapus!']);
         redirect($this->agent->referrer());
     }
 
@@ -262,13 +289,9 @@ class Dashboard extends CI_Controller
             'harga' => $harga,
             'status' => 'waiting',
         ];
-
-        // echo '<pre>';
-        // print_r($data);
-        // echo '</pre>';
-        // die;
-
         $this->db->insert('pesanan', $data);
+
+        $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Pesanan berhasil dibuat!']);
         redirect(base_url('dashboard/pesanan'));
     }
 
@@ -280,13 +303,8 @@ class Dashboard extends CI_Controller
         $data['user'] = $this->Main_model->getUserData($session['user_data']['username']);
 
         // DATA TAMBAHAN
-        $data['customJs'] = ['pesananJs'];
+        $data['customJs'] = ['pesananJs', 'sweetAlertJs'];
         $data['pesanan'] = ($data['user']['role'] == '2') ? $this->Main_model->getPesananByKantin($data['user']['username']) : $this->Main_model->getPesananByUser($data['user']['username']);
-
-        // echo '<pre>';
-        // print_r($data['pesanan']);
-        // echo '</pre>';
-        // die;
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
@@ -300,8 +318,9 @@ class Dashboard extends CI_Controller
             'status' => $this->input->post('status'),
             'informasi' => $this->input->post('informasi'),
         ];
-
         $this->db->update('pesanan', $data, ['id' => $id]);
+
+        $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Pesanan berhasil diupdate!']);
         redirect($this->agent->referrer());
     }
 }

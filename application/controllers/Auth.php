@@ -14,7 +14,7 @@ class Auth extends CI_Controller
 
     public function index()
     {
-        $this->load->view('auth/login');
+        $this->load->view('auth/index');
     }
 
     public function Login()
@@ -22,8 +22,10 @@ class Auth extends CI_Controller
         $this->form_validation->set_rules('username', 'Username', 'required|trim');
         $this->form_validation->set_rules('password', 'Password', 'required|trim');
 
+        $data['customJs'] = 'sweetAlertJs';
+
         if ($this->form_validation->run() == false) {
-            $this->load->view('auth/login');
+            $this->load->view('auth/login', $data);
         } else {
             $username = $this->input->post('username', true);
             $password = $this->input->post('password', true);
@@ -83,6 +85,8 @@ class Auth extends CI_Controller
                         'role' => 3
                     ];
                     $this->db->insert('users', $data);
+
+                    $this->session->set_flashdata('message', ['icon' => 'success', 'title' => 'Berhasil', 'text' => 'Akun berhasil dibuat!']);
                     redirect(base_url('auth/login'));
                 } else {
                     $this->session->set_flashdata('error', 'Password tidak cocok');

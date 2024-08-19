@@ -12,7 +12,7 @@
                     <!-- head -->
                     <thead>
                         <tr class="text-center text-lg">
-                            <th colspan="2">DATA DIRI</th>
+                            <th colspan="2"><a href="<?= base_url('dashboard/editprofil') ?>">DATA DIRI</a></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,7 +43,7 @@
                     <!-- head -->
                     <thead>
                         <tr class="text-center text-lg">
-                            <th colspan="3">RIWAYAT PEMESANAN</th>
+                            <th colspan="3"><a href="<?= base_url('dashboard/pesanan') ?>">PESANAN</a></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,7 +65,7 @@
                 <h3 class="text-lg font-bold text-gray-500 mb-6">JUMLAH KANTIN</h3>
                 <div class="flex justify-center w-full gap-8">
                     <i class="fa-solid fa-shop fa-6x"></i>
-                    <p id="typed-output" class="text-8xl font-bold">3</p>
+                    <p id="typed-output" class="text-8xl font-bold"><?= count($kantin) ?></p>
                 </div>
             </div>
         <?php endif ?>
